@@ -1,0 +1,14 @@
+{
+  "fase": "preparacion",
+  "variante": "paralelo",
+  "tiempos_seg": [
+    1.8919,
+    1.9294,
+    1.8641,
+    1.8807,
+    1.8387
+  ],
+  "promedio_seg": 1.8809,
+  "n_imagenes": 17400,
+  "nucleos": 11
+}

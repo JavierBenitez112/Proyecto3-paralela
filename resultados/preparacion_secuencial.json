@@ -1,0 +1,14 @@
+{
+  "fase": "preparacion",
+  "variante": "secuencial",
+  "tiempos_seg": [
+    7.0164,
+    7.1035,
+    7.2044,
+    7.1527,
+    7.1544
+  ],
+  "promedio_seg": 7.1263,
+  "n_imagenes": 17400,
+  "nucleos": 1
+}
