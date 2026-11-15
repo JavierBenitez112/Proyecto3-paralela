@@ -1,0 +1,13 @@
+{
+  "fase": "convolucion",
+  "variante": "secuencial",
+  "tiempos_seg": [
+    46.1913,
+    46.3515,
+    46.3816,
+    46.2011,
+    45.9605
+  ],
+  "promedio_seg": 46.2172,
+  "n_imagenes": 2000
+}

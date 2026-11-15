@@ -1,0 +1,13 @@
+{
+  "fase": "entrenamiento",
+  "variante": "paralelo",
+  "tiempos_seg": [
+    16.3705,
+    16.1256,
+    15.9896
+  ],
+  "promedio_seg": 16.1619,
+  "dispositivo": "NVIDIA GeForce RTX 3050 Ti Laptop GPU",
+  "epocas": 5,
+  "val_accuracy": 0.8977
+}

@@ -1,6 +1,6 @@
 # Proyecto 3: Mejorando algoritmos con CUDA
 
-Informe (borrador). Todo lo marcado como **[PENDIENTE: ...]** requiere una medición o captura real.
+Informe (borrador). Las mediciones ya están incluidas; lo marcado como **[PENDIENTE: ...]** son las capturas de pantalla y un valor opcional.
 
 ## 1. Análisis de la solución secuencial
 
@@ -52,15 +52,15 @@ Nota: el backward cuesta aproximadamente el doble del forward, por lo que una é
 
 ## 2. Medición secuencial
 
-**Procedimiento.** Cada fase se mide con `time.perf_counter()`, 5 repeticiones con los mismos datos y la misma semilla (123), y se reporta el promedio y la desviación estándar. Los tiempos se guardan en `resultados/<fase>_secuencial.json`. En entrenamiento se fijan 5 épocas para que ambas variantes hagan el mismo trabajo.
+**Procedimiento.** Cada fase se mide con `time.perf_counter()`, con los mismos datos y la misma semilla (123), y se reporta el promedio y la desviación estándar. Preparación y convolución usan 5 repeticiones; entrenamiento usa 3 (valor por defecto de `02_entrenamiento.py`, porque cada corrida en CPU tarda casi 3 minutos). Los tiempos se guardan en `resultados/<fase>_secuencial.json`. En entrenamiento se fijan 5 épocas para que ambas variantes hagan el mismo trabajo.
 
 | Fase | Tiempo por repetición (s) | Promedio (s) | Desv. est. (s) |
 |---|---|---|---|
-| Preparación (17,400 imágenes) | **[PENDIENTE: 5 tiempos]** | **[PENDIENTE]** | **[PENDIENTE]** |
-| Entrenamiento CPU (5 épocas) | **[PENDIENTE: 5 tiempos]** | **[PENDIENTE]** | **[PENDIENTE]** |
-| Convolución NumPy (N = 2000) | **[PENDIENTE: 5 tiempos]** | **[PENDIENTE]** | **[PENDIENTE]** |
+| Preparación (17,400 imágenes) | 16.49, 17.45, 17.05, 16.94, 17.22 | 17.031 | 0.360 |
+| Entrenamiento CPU (5 épocas) | 171.44, 174.50, 165.03 | 170.324 | 4.830 |
+| Convolución NumPy (N = 2000) | 46.19, 46.35, 46.38, 46.20, 45.96 | 46.217 | 0.167 |
 
-Equipo: **[PENDIENTE: CPU, núcleos, RAM, sistema operativo]**.
+Equipo: laptop con AMD Ryzen 5 5600H (6 núcleos físicos, 12 lógicos), 16 GB de RAM, Windows 11 Home (nativo, sin WSL).
 
 **Factores que afectan el rendimiento medido:**
 - E/S de disco: la lectura de 17,400 archivos depende del disco y de si el sistema los tiene en caché (la primera repetición suele ser más lenta).
@@ -99,49 +99,68 @@ hilo (i, y, x) -> salida[i, y, x] = suma de 9 vecinos * filtro
 
 ## 5. Implementación y medición paralela
 
-**Cómo ejecutar:** abrir `notebooks/proyecto3_colab.ipynb` en Google Colab con GPU T4 y correr las celdas en orden (ver README).
+**Cómo ejecutar:** en Windows nativo con dos entornos conda (`p3cuda` para las fases 1, 2 y 4; `p3numba` para la fase 3), siguiendo el README. Alternativas: WSL2/Linux con un solo entorno, o `notebooks/proyecto3_colab.ipynb` en Google Colab con GPU T4.
 
 **Librerías y su rol:**
 - `multiprocessing` (Pool): reparte las imágenes entre los núcleos de la CPU (fase 1).
-- TensorFlow + CUDA + cuDNN: construye la CNN y la ejecuta en `/CPU:0` o `/GPU:0` (fase 2).
-- Numba CUDA: kernel de convolución escrito a mano con control explícito de hilos, bloques y transferencias (fase 3).
+- TensorFlow 2.10.1 + CUDA 11.2 + cuDNN 8.1: construye la CNN y la ejecuta en `/CPU:0` o `/GPU:0` (fase 2). Es la última versión de TensorFlow con GPU en Windows nativo.
+- Numba CUDA (`numba-cuda` 0.30.4 con librerías de CUDA 12): kernel de convolución escrito a mano con control explícito de hilos, bloques y transferencias (fase 3). Va en un entorno aparte porque el Numba compatible con TensorFlow 2.10 falla con el driver NVIDIA actual.
 - NumPy, Pillow, matplotlib: datos, lectura de imágenes y gráficas.
 
 | Fase | Tiempo por repetición (s) | Promedio (s) | Desv. est. (s) |
 |---|---|---|---|
-| Preparación, Pool de **[PENDIENTE: n núcleos]** procesos | **[PENDIENTE]** | **[PENDIENTE]** | **[PENDIENTE]** |
-| Entrenamiento GPU (5 épocas) | **[PENDIENTE]** | **[PENDIENTE]** | **[PENDIENTE]** |
-| Convolución Numba CUDA (N = 2000) | **[PENDIENTE]** | **[PENDIENTE]** | **[PENDIENTE]** |
+| Preparación, Pool de 12 procesos | 4.20, 4.60, 4.50, 4.53, 4.50 | 4.466 | 0.155 |
+| Entrenamiento GPU (5 épocas) | 16.37, 16.13, 15.99 | 16.162 | 0.193 |
+| Convolución Numba CUDA (N = 2000) | 0.0230, 0.0218, 0.0238, 0.0265, 0.0235 | 0.0237 | 0.002 |
 
-| Convolución CUDA | Tiempo (s) |
+| Convolución CUDA | Tiempo promedio (s) |
 |---|---|
-| Transferencia CPU -> GPU | **[PENDIENTE]** |
-| Kernel | **[PENDIENTE]** |
-| Transferencia GPU -> CPU | **[PENDIENTE]** |
+| Transferencia CPU -> GPU | 0.0091 |
+| Kernel | 0.0059 |
+| Transferencia GPU -> CPU | 0.0087 |
 
-GPU usada: **[PENDIENTE: modelo, VRAM, versión de CUDA según `nvidia-smi`]**. Accuracy de validación CPU vs GPU: **[PENDIENTE]**.
+La salida del kernel coincide con la versión secuencial (`np.allclose`, atol = 1e-5).
+
+GPU usada: NVIDIA GeForce RTX 3050 Ti Laptop GPU, 4 GB de VRAM, driver 621.01 (`nvidia-smi` reporta CUDA 13.5). Durante el entrenamiento en GPU, `resultados/nvidia_smi_log.csv` registra picos de 89 % de utilización y 3.8 GB de memoria usada (incluye lo que ya ocupaba el escritorio, ≈1.2 GB). Accuracy de validación tras 5 épocas (última repetición): 0.8793 en CPU y 0.8977 en GPU; la diferencia es la variación normal entre corridas, porque las operaciones de cuDNN no son deterministas.
 
 ## 6. Análisis y conclusiones
 
-**Tabla comparativa:** **[PENDIENTE: pegar `resultados/tabla_comparativa.md`]**. Figuras en `resultados/figuras/` (`tiempos_por_fase.png`, `speedup_por_fase.png`, `desglose_gpu.png`): **[PENDIENTE: insertar]**.
+**Tabla comparativa** (`resultados/tabla_comparativa.md`):
+
+| Fase | T secuencial (s) | desv | T paralelo (s) | desv | Speedup |
+|---|---|---|---|---|---|
+| preparacion | 17.031 | 0.360 | 4.466 | 0.155 | 3.81x |
+| entrenamiento | 170.324 | 4.830 | 16.162 | 0.193 | 10.54x |
+| convolucion | 46.217 | 0.167 | 0.024 | 0.002 | 1950.09x |
+
+![Tiempo por fase](../resultados/figuras/tiempos_por_fase.png)
+
+![Speedup por fase](../resultados/figuras/speedup_por_fase.png)
+
+![Desglose GPU](../resultados/figuras/desglose_gpu.png)
+
+Lectura de los resultados:
+- **Preparación (3.81x con 12 procesos):** lejos de 12x porque el equipo tiene 6 núcleos físicos (los otros 6 son SMT), y porque crear los procesos y devolver los arreglos al proceso padre es trabajo secuencial.
+- **Entrenamiento (10.54x):** la GPU baja cada época de ≈34 s a ≈3 s. El speedup no es mayor porque el modelo es pequeño y el armado de lotes y el bucle de Keras siguen en la CPU.
+- **Convolución (1950x):** la línea base son bucles de Python puro, lentos a propósito, así que la cifra mide tanto el paralelismo como el paso de código interpretado a código compilado. Del tiempo en GPU (23.7 ms), solo 5.9 ms son el kernel; las dos transferencias suman 17.8 ms (75 %). Contando solo el kernel el speedup es ≈7800x.
 
 Speedup: **S = T_secuencial / T_paralelo**. Un valor mayor a 1 indica que la versión paralela es más rápida.
 
 **(a) ¿Por qué procesar imágenes/archivos en varios núcleos de CPU y delegar solo la matemática de la red a la GPU?** Preparar una imagen es leer un archivo, decodificar JPEG y reescalar: mucha E/S y lógica de control, con tareas independientes y de duración irregular. Eso se reparte bien entre unos pocos núcleos potentes de CPU, y una GPU no tiene acceso directo al sistema de archivos ni es eficiente decodificando JPEG. En cambio, la convolución y las multiplicaciones de matrices son la misma operación aritmética sobre millones de datos, que es lo que una GPU hace mejor. Cada procesador se usa para lo que mejor hace, y los tensores ya preparados se envían a la GPU una sola vez.
 
-**(b) ¿Cómo redujo o cambió CUDA el tiempo de procesamiento?** Reducción medida: **[PENDIENTE: speedup de entrenamiento y de convolución]**. Mecanismo: en lugar de calcular una posición de salida tras otra, la GPU lanza miles de hilos que calculan posiciones distintas a la vez, y su ancho de banda de memoria y cantidad de unidades aritméticas son mucho mayores que los de la CPU. En el entrenamiento, cuDNN además usa kernels optimizados. El costo es que aparecen tiempos nuevos (transferencias host-device, lanzamiento) que la versión secuencial no tiene.
+**(b) ¿Cómo redujo o cambió CUDA el tiempo de procesamiento?** Reducción medida: el entrenamiento pasó de 170.3 s a 16.2 s (10.54x) y la convolución de 2000 imágenes de 46.2 s a 0.024 s (1950x, incluyendo transferencias). Mecanismo: en lugar de calcular una posición de salida tras otra, la GPU lanza miles de hilos que calculan posiciones distintas a la vez, y su ancho de banda de memoria y cantidad de unidades aritméticas son mucho mayores que los de la CPU. En el entrenamiento, cuDNN además usa kernels optimizados. El costo es que aparecen tiempos nuevos (transferencias host-device, lanzamiento) que la versión secuencial no tiene.
 
 **(c) Factores que justifican o limitan el uso de CUDA:**
-- Sobrecosto de transferencia: copiar datos por PCIe puede costar más que el cálculo si el trabajo por dato es poco.
+- Sobrecosto de transferencia: copiar datos por PCIe puede costar más que el cálculo si el trabajo por dato es poco. En la fase 3 las transferencias fueron el 75 % del tiempo en GPU (17.8 ms de 23.7 ms).
 - Lotes o problemas pequeños: no ocupan la GPU, y el sobrecosto fijo domina.
 - Ley de Amdahl: la parte secuencial (carga de datos, bucle de épocas) acota el speedup total: S <= 1 / ((1 - p) + p/s), con p la fracción paralelizable y s la aceleración de esa fracción.
-- VRAM limitada: el conjunto de datos y el modelo deben caber en memoria de la GPU (o procesarse por lotes).
-- Disponibilidad de hardware: requiere una GPU NVIDIA y drivers/toolkit compatibles; en Colab el acceso es limitado.
+- VRAM limitada: el conjunto de datos y el modelo deben caber en memoria de la GPU (o procesarse por lotes). En la fase 2 la GPU de 4 GB llegó a 3.8 GB usados.
+- Disponibilidad de hardware: requiere una GPU NVIDIA y drivers/toolkit compatibles; en Colab el acceso es limitado. En este equipo la compatibilidad de versiones obligó a usar dos entornos (TensorFlow 2.10 con CUDA 11.2 y Numba con CUDA 12).
 - Calentamiento/JIT: la primera llamada incluye inicialización de CUDA y compilación de Numba; conviene excluirla o reportarla aparte. **[PENDIENTE: valor medido de la primera ejecución si se mide]**.
 
 ### Capturas requeridas por la rúbrica
 
-- [ ] Uso de los núcleos de CPU durante la fase 1 (panel de recursos de Colab o `top`). **[PENDIENTE: captura]**
+- [ ] Uso de los núcleos de CPU durante la fase 1 (Administrador de tareas > Rendimiento > CPU, vista de procesadores lógicos). **[PENDIENTE: captura]**
 - [ ] `nvidia-smi` durante la fase 2 mostrando la GPU en uso (y/o `resultados/nvidia_smi_log.csv`). **[PENDIENTE: captura]**
 - [ ] `nvidia-smi` inicial con el modelo de GPU. **[PENDIENTE: captura]**
 - [ ] Salida de cada script con los tiempos. **[PENDIENTE: captura]**

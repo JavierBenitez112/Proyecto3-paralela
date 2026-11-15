@@ -1,0 +1,26 @@
+{
+  "fase": "convolucion",
+  "variante": "paralelo",
+  "tiempos_seg": [
+    0.023,
+    0.0218,
+    0.0238,
+    0.0265,
+    0.0235
+  ],
+  "promedio_seg": 0.0237,
+  "n_imagenes": 2000,
+  "transferencia_ida_seg": 0.0091,
+  "kernel_seg": 0.0059,
+  "transferencia_vuelta_seg": 0.0087,
+  "hilos_por_bloque": [
+    4,
+    8,
+    8
+  ],
+  "bloques_por_grid": [
+    500,
+    8,
+    8
+  ]
+}

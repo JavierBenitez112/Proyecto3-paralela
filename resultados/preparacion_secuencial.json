@@ -2,13 +2,13 @@
   "fase": "preparacion",
   "variante": "secuencial",
   "tiempos_seg": [
-    7.0164,
-    7.1035,
-    7.2044,
-    7.1527,
-    7.1544
+    16.4888,
+    17.4535,
+    17.0534,
+    16.9365,
+    17.2214
   ],
-  "promedio_seg": 7.1263,
+  "promedio_seg": 17.0307,
   "n_imagenes": 17400,
   "nucleos": 1
 }

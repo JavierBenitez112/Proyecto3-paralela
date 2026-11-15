@@ -2,13 +2,13 @@
   "fase": "preparacion",
   "variante": "paralelo",
   "tiempos_seg": [
-    1.8919,
-    1.9294,
-    1.8641,
-    1.8807,
-    1.8387
+    4.1977,
+    4.6002,
+    4.5014,
+    4.5283,
+    4.5009
   ],
-  "promedio_seg": 1.8809,
+  "promedio_seg": 4.4657,
   "n_imagenes": 17400,
-  "nucleos": 11
+  "nucleos": 12
 }
