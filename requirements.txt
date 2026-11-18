@@ -1,7 +1,8 @@
-numpy
+numpy<2.4   # numba-cuda usa np.row_stack (eliminado en NumPy 2.4+)
 pandas
 pillow
 matplotlib
-tensorflow
-numba
+kagglehub
+tensorflow[and-cuda]
+numba-cuda[cu12]
 pytest
