@@ -110,16 +110,19 @@ def main():
     print(f"[info] variante paralela (GPU: {nombre})")
     # evidencia: registra uso y memoria de la GPU cada segundo mientras entrena
     ruta_log = cfg.DIR_RESULTADOS / "nvidia_smi_log.csv"
-    monitor = None
+    monitor, log = None, None
     if shutil.which("nvidia-smi"):
+        log = open(ruta_log, "w")
         monitor = subprocess.Popen(
             ["nvidia-smi", "--query-gpu=timestamp,utilization.gpu,memory.used,memory.total",
-             "--format=csv", "-l", "1"], stdout=open(ruta_log, "w"))
+             "--format=csv", "-l", "1"], stdout=log)
     try:
         t_gpu, acc_gpu = medir("/GPU:0", datos, args.epocas, args.repeticiones)
     finally:
         if monitor:
             monitor.terminate()
+            monitor.wait(timeout=5)  # que nvidia-smi suelte el archivo antes de cerrarlo
+            log.close()
             print(f"[guardado] {ruta_log.name}")
     cfg.guardar_tiempos("entrenamiento", "paralelo", t_gpu,
                         dispositivo=nombre, epocas=args.epocas, val_accuracy=round(acc_gpu, 4))
