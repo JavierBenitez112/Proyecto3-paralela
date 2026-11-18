@@ -13,20 +13,31 @@ src/02_entrenamiento.py  FASE 2: CNN en /CPU:0 vs /GPU:0 (CUDA/cuDNN)
 src/03_kernel_cuda.py    FASE 3: convolución 3x3, bucles NumPy vs kernel Numba CUDA
 src/04_comparacion.py    tabla comparativa y gráficas
 notebooks/proyecto3_colab.ipynb   runner para Google Colab (T4)
-docs/informe.md          borrador del informe
+docs/informe.md          informe (fuente); docs/informe.pdf es el entregable
+flake.nix                entorno reproducible para Linux/NixOS
 tests/                   pruebas sin GPU (python -m pytest tests)
+scripts/                 captura de evidencia (capturar_evidencia.sh)
 ```
 
-## Ejecución local (solo partes de CPU)
+## Ejecución con Nix (Linux/NixOS, un solo entorno)
+
+Requiere Nix con flakes y, para las fases 2 y 3, el driver de NVIDIA. `nix develop` crea `.venv` la primera
+vez con `requirements.txt` (TensorFlow `[and-cuda]` y `numba-cuda[cu12]`; las librerías CUDA vienen en las
+ruedas de pip) y configura `LD_LIBRARY_PATH` para que encuentren `libcuda.so` del driver.
 
 ```
-pip install -r requirements.txt
-export ASL_DATA=/ruta/a/asl_alphabet_train   # carpeta que contiene A, B, ..., nothing, space
+nix develop
+export ASL_DATA=/ruta/a/asl_alphabet_train   # por defecto data/raw/asl_alphabet_train
+python src/00_verificar_hardware.py          # TensorFlow y Numba deben listar la GPU
 python src/01_preparacion.py
+python src/02_entrenamiento.py
+python src/03_kernel_cuda.py
 python src/04_comparacion.py
+
+nix run .#informe                            # regenera docs/informe.pdf (pandoc + typst)
 ```
 
-Las fases con GPU (2 y 3) requieren una GPU NVIDIA con CUDA.
+Verificado en NixOS con RTX 5070: TensorFlow 2.21 y Numba reconocen la GPU.
 
 Pruebas (no necesitan GPU ni dataset): `python -m pytest tests`
 
@@ -123,3 +134,17 @@ Medidos en Windows nativo (Ryzen 5 5600H, RTX 3050 Ti Laptop 4 GB):
 | preparacion (1 vs 12 procesos) | 17.031 | 4.466 | 3.81x |
 | entrenamiento (CPU vs GPU, 5 épocas) | 170.324 | 16.162 | 10.54x |
 | convolucion (bucles Python vs kernel CUDA, N = 2000) | 46.217 | 0.024 | 1950x |
+
+Repetido en un segundo equipo con `nix develop` (Ryzen 5 7600, RTX 5070 12 GB, NixOS), en `resultados/rtx5070/`:
+
+| Fase | T secuencial (s) | T paralelo (s) | Speedup |
+|---|---|---|---|
+| preparacion | 8.491 | 1.776 | 4.78x |
+| entrenamiento | 131.466 | 9.436 | 13.93x |
+| convolucion | 24.117 | 0.014 | 1698x |
+
+## Evidencia (capturas de pantalla)
+
+`scripts/capturar_evidencia.sh` (dentro de `nix develop`) corre las fases en un sway headless, con `btop` y
+`nvidia-smi` al lado, y guarda capturas (`grim`) y logs en `resultados/rtx5070/{capturas,logs}`. No usa la
+pantalla real. `FASES="2 3"` repite solo algunas fases.
