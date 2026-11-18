@@ -35,7 +35,7 @@ def main():
     ap.add_argument("--dir", type=Path, default=cfg.DIR_RESULTADOS)
     args = ap.parse_args()
     carpeta = args.dir
-    figuras = carpeta / "figuras" if args.dir != cfg.DIR_RESULTADOS else cfg.DIR_FIGURAS
+    figuras = carpeta / "figuras"  # con el --dir por defecto es cfg.DIR_FIGURAS
     figuras.mkdir(parents=True, exist_ok=True)
 
     filas = ["| Fase | T secuencial (s) | desv | T paralelo (s) | desv | Speedup |",
