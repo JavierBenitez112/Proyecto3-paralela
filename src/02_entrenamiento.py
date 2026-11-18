@@ -129,4 +129,5 @@ def main():
     print(f"[resultado] speedup = {np.mean(t_cpu) / np.mean(t_gpu):.2f}x")
 
 
-main()
+if __name__ == "__main__":
+    main()

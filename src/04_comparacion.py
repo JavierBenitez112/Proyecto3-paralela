@@ -99,4 +99,5 @@ def main():
     print(f"[guardado] tabla_comparativa.md y figuras en {figuras}")
 
 
-main()
+if __name__ == "__main__":
+    main()

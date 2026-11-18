@@ -138,4 +138,5 @@ def main():
           f"solo kernel = {prom(tiempos_seq) / prom(ker):.1f}x")
 
 
-main()
+if __name__ == "__main__":
+    main()
