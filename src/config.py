@@ -19,8 +19,9 @@ RUTA_TRAIN_CRUDO = Path(os.environ.get(
 
 DIR_PROCESSED = RAIZ / "data" / "processed"
 RUTA_TENSORES = DIR_PROCESSED / "tensores.npz"
-DIR_RESULTADOS = RAIZ / "resultados"
-DIR_FIGURAS = RAIZ / "resultados" / "figuras"
+# P3_RESULTADOS permite medir otro equipo sin pisar resultados/ (p. ej. resultados/rtx5070)
+DIR_RESULTADOS = Path(os.environ.get("P3_RESULTADOS", RAIZ / "resultados"))
+DIR_FIGURAS = DIR_RESULTADOS / "figuras"
 
 SEMILLA = 123
 
