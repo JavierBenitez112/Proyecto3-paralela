@@ -52,6 +52,8 @@ def guardar_tiempos(fase, variante, tiempos_seg, **extra):
     variante : "secuencial" | "paralelo"
     extra    : cualquier dato adicional (n_imagenes, dispositivo, transferencia_seg, ...)
     """
+    if not tiempos_seg:
+        raise ValueError(f"{fase}/{variante}: no hay tiempos que guardar (repeticiones >= 1)")
     DIR_RESULTADOS.mkdir(parents=True, exist_ok=True)
     registro = {
         "fase": fase,
