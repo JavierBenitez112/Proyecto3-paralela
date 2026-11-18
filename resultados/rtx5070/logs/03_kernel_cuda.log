@@ -1,0 +1,21 @@
+[cargado]  2000 imagenes de 64x64
+[info] variante secuencial (bucles Python)
+[info] repeticion 1/5: 24.14 s
+[info] repeticion 2/5: 23.51 s
+[info] repeticion 3/5: 23.98 s
+[info] repeticion 4/5: 24.94 s
+[info] repeticion 5/5: 24.02 s
+[guardado] convolucion_secuencial.json -> promedio 24.117 s
+[hardware] GPU: NVIDIA GeForce RTX 5070
+[grid] hilos por bloque (4, 8, 8) (256 hilos/bloque)
+[grid] bloques por grid (500, 8, 8) (32000 bloques)
+[grid] hilos totales lanzados 8192000 (pixeles de salida: 8192000)
+[info] repeticion 1/5: ida 0.0051 s, kernel 0.0009 s, vuelta 0.0144 s
+[info] repeticion 2/5: ida 0.0044 s, kernel 0.0008 s, vuelta 0.0139 s
+[info] repeticion 3/5: ida 0.0049 s, kernel 0.0008 s, vuelta 0.0039 s
+[info] repeticion 4/5: ida 0.0056 s, kernel 0.0009 s, vuelta 0.0046 s
+[info] repeticion 5/5: ida 0.0056 s, kernel 0.0009 s, vuelta 0.0044 s
+[verificacion] GPU == secuencial (allclose atol=1e-5): True
+[guardado] convolucion_paralelo.json -> promedio 0.0142 s
+[resultado] speedup total = 1694.1x, solo kernel = 27790.8x
+__FIN__

@@ -1,0 +1,42 @@
+[cpu] x86_64 -> 12 nucleos logicos
+[so ] Linux-6.18.60-x86_64-with-glibc2.44
+Tue Nov 17 22:59:07 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.78.08              KMD Version: 615.78.08     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 5070        Off |   00000000:01:00.0  On |                  N/A |
+|  0%   51C    P0             26W /  250W |    2010MiB /  12227MiB |      4%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A            2833      G   Hyprland                                249MiB |
+|    0   N/A  N/A            2875      G   quickshell                               28MiB |
+|    0   N/A  N/A            2876    C+G   ...le-2026-10-26/bin/wezterm-gui        147MiB |
+|    0   N/A  N/A            2877    C+G   ...le-2026-10-26/bin/wezterm-gui         74MiB |
+|    0   N/A  N/A            2880      G   ...current-system/sw/bin/firefox        279MiB |
+|    0   N/A  N/A            2926      G   Xwayland                                  3MiB |
+|    0   N/A  N/A            3145      G   ...rack-uuid=3190708988185955192         70MiB |
+|    0   N/A  N/A            3765      G   ...rack-uuid=3190708988185955192        134MiB |
+|    0   N/A  N/A            5093      G   ...current-system/sw/bin/firefox         99MiB |
+|    0   N/A  N/A           13154      G   ...l/share/Steam/steamrt64/steam          5MiB |
+|    0   N/A  N/A           13178      G   ./steamwebhelper                         36MiB |
+|    0   N/A  N/A           13208      G   ...team/steamrt64/steamwebhelper         78MiB |
+|    0   N/A  N/A           18360      G   C:\windows\system32\explorer.exe          2MiB |
+|    0   N/A  N/A           18387    C+G   ... FANTASY PR\FINAL FANTASY.exe        316MiB |
++-----------------------------------------------------------------------------------------+
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794977948.182640   24994 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1794977949.084280   24994 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+[tensorflow 2.21.0] GPUs: [PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
+[numba] GPU: NVIDIA GeForce RTX 5070
+__FIN__

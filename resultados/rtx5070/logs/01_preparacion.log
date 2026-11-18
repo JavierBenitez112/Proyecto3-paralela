@@ -1,0 +1,18 @@
+[info] 17400 imagenes, 12 nucleos
+[info] pasada de calentamiento (no se mide)
+  secuencial corrida 1/5: 8.45 s
+  secuencial corrida 2/5: 8.36 s
+  secuencial corrida 3/5: 8.52 s
+  secuencial corrida 4/5: 8.53 s
+  secuencial corrida 5/5: 8.61 s
+  paralelo   corrida 1/5: 1.80 s
+  paralelo   corrida 2/5: 1.82 s
+  paralelo   corrida 3/5: 1.87 s
+  paralelo   corrida 4/5: 1.59 s
+  paralelo   corrida 5/5: 1.81 s
+[ok] la salida paralela es identica a la secuencial
+[guardado] tensores.npz -> 66 MB
+[guardado] preparacion_secuencial.json -> promedio 8.4912 s
+[guardado] preparacion_paralelo.json -> promedio 1.776 s
+[speedup] 4.78x
+__FIN__

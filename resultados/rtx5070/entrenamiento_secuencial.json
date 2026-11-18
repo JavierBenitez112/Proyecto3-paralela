@@ -1,0 +1,13 @@
+{
+  "fase": "entrenamiento",
+  "variante": "secuencial",
+  "tiempos_seg": [
+    131.3409,
+    130.512,
+    132.5464
+  ],
+  "promedio_seg": 131.4664,
+  "dispositivo": "CPU",
+  "epocas": 5,
+  "val_accuracy": 0.8824
+}

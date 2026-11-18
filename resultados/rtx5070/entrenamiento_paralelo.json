@@ -1,0 +1,13 @@
+{
+  "fase": "entrenamiento",
+  "variante": "paralelo",
+  "tiempos_seg": [
+    9.8233,
+    8.8313,
+    9.6534
+  ],
+  "promedio_seg": 9.436,
+  "dispositivo": "NVIDIA GeForce RTX 5070",
+  "epocas": 5,
+  "val_accuracy": 0.8923
+}

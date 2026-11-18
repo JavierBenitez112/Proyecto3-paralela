@@ -1,0 +1,5 @@
+| Fase | T secuencial (s) | desv | T paralelo (s) | desv | Speedup |
+|---|---|---|---|---|---|
+| preparacion | 8.491 | 0.095 | 1.776 | 0.107 | 4.78x |
+| entrenamiento | 131.466 | 1.023 | 9.436 | 0.531 | 13.93x |
+| convolucion | 24.117 | 0.516 | 0.014 | 0.005 | 1698.38x |
