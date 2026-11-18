@@ -9,7 +9,7 @@ Lee    : x_train de cfg.RUTA_TENSORES (o --tensores PATH)
 Hace   : convolucion secuencial (bucles Python) vs kernel CUDA; mide por separado
          transferencia CPU->GPU, kernel y transferencia GPU->CPU; verifica con allclose
 Escribe: resultados/convolucion_secuencial.json y resultados/convolucion_paralelo.json
-Ejecutar: python src/03_kernel_cuda.py [--n-imagenes 2000] [--tensores PATH]
+Ejecutar: python src/03_kernel_cuda.py [--n-imagenes 2000] [--repeticiones 5] [--tensores PATH]
 """
 
 import argparse
@@ -65,6 +65,7 @@ def conv2d_kernel(imgs, filtro, salida):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n-imagenes", type=int, default=2000)
+    ap.add_argument("--repeticiones", type=int, default=cfg.REPETICIONES)
     ap.add_argument("--tensores", default=cfg.RUTA_TENSORES)
     args = ap.parse_args()
 
@@ -75,11 +76,11 @@ def main():
 
     print("[info] variante secuencial (bucles Python)")
     tiempos_seq = []
-    for i in range(cfg.REPETICIONES):
+    for i in range(args.repeticiones):
         inicio = time.perf_counter()
         ref = conv2d_secuencial(imgs, FILTRO)
         tiempos_seq.append(time.perf_counter() - inicio)
-        print(f"[info] repeticion {i + 1}/{cfg.REPETICIONES}: {tiempos_seq[-1]:.2f} s")
+        print(f"[info] repeticion {i + 1}/{args.repeticiones}: {tiempos_seq[-1]:.2f} s")
     cfg.guardar_tiempos("convolucion", "secuencial", tiempos_seq, n_imagenes=n)
 
     if cuda is None or not cuda.is_available():
@@ -104,7 +105,7 @@ def main():
     cuda.synchronize()
 
     ida, ker, vuelta = [], [], []
-    for i in range(cfg.REPETICIONES):
+    for i in range(args.repeticiones):
         t0 = time.perf_counter()
         d_imgs, d_filtro = cuda.to_device(imgs), cuda.to_device(FILTRO)
         d_sal = cuda.device_array_like(imgs)
@@ -118,7 +119,7 @@ def main():
         ida.append(t1 - t0)
         ker.append(t2 - t1)
         vuelta.append(t3 - t2)
-        print(f"[info] repeticion {i + 1}/{cfg.REPETICIONES}: ida {ida[-1]:.4f} s, "
+        print(f"[info] repeticion {i + 1}/{args.repeticiones}: ida {ida[-1]:.4f} s, "
               f"kernel {ker[-1]:.4f} s, vuelta {vuelta[-1]:.4f} s")
 
     ok = np.allclose(res, ref, atol=1e-5)
