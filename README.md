@@ -14,6 +14,7 @@ src/03_kernel_cuda.py    FASE 3: convolución 3x3, bucles NumPy vs kernel Numba 
 src/04_comparacion.py    tabla comparativa y gráficas
 notebooks/proyecto3_colab.ipynb   runner para Google Colab (T4)
 docs/informe.md          borrador del informe
+tests/                   pruebas sin GPU (python -m pytest tests)
 ```
 
 ## Ejecución local (solo partes de CPU)
@@ -26,6 +27,8 @@ python src/04_comparacion.py
 ```
 
 Las fases con GPU (2 y 3) requieren una GPU NVIDIA con CUDA.
+
+Pruebas (no necesitan GPU ni dataset): `python -m pytest tests`
 
 ## Ejecución en Windows nativo con GPU NVIDIA (configuración usada para los resultados)
 
